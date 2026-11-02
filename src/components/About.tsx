@@ -6,8 +6,8 @@ const pillars = [
   {
     icon: ScanSearch,
     tone: 'text-cyber',
-    title: 'Forensics & IA',
-    text: "Collecte et analyse d'artefacts, outils d'investigation enrichis par des LLM locaux.",
+    title: 'Threat Intel & Forensics',
+    text: "Veille dark web via Tor, alertes vérifiables, collecte d'artefacts et LLM locaux.",
   },
   {
     icon: Bug,

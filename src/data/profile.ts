@@ -14,12 +14,13 @@ export const profile = {
   cv: `${import.meta.env.BASE_URL}CV_Donald_William_Kodjo_EVLO.pdf`,
   roles: [
     'Ingénieur en cybersécurité',
+    'Threat Intelligence',
     'Développeur mobile Flutter',
     'Forensics & IA',
     'Développeur web full-stack',
   ],
   summary:
-    "Ingénieur en Sécurité des Systèmes d'Information, je combine une double expertise en cybersécurité et en développement logiciel. Passionné par la forensics numérique, je conçois des outils concrets qui intègrent l'Intelligence Artificielle à l'investigation et à l'analyse de menaces.",
+    "Ingénieur en Sécurité des Systèmes d'Information, je combine une double expertise en cybersécurité et en développement logiciel. Passionné par la threat intelligence et la forensics numérique, je conçois des outils concrets qui intègrent l'Intelligence Artificielle à la veille, à l'investigation et à l'analyse de menaces.",
   about: [
     "Mon parcours m'a mené du génie logiciel et de l'administration réseau jusqu'à un Master en Sécurité des Systèmes d'Information à l'École Supérieure Polytechnique de Dakar.",
     "Ce profil transversal, du pentest au développement mobile, me donne une vue panoramique de la sécurité : je sais comment une application est construite, et comment elle peut être attaquée.",
@@ -32,6 +33,7 @@ export const profile = {
 };
 
 export const skillGroups: SkillGroup[] = [
+  { title: 'Threat Intelligence', domain: 'cyber', items: ['Veille dark web (Tor)', 'STIX 2.1', 'Admiralty & TLP', 'NIS2'] },
   { title: 'Sécurité offensive', domain: 'cyber', items: ['Pentesting', 'Burp Suite', 'OWASP ZAP', 'Metasploit'] },
   { title: 'Analyse réseau', domain: 'cyber', items: ['Wireshark', 'Nmap'] },
   { title: 'Forensics & IA', domain: 'cyber', items: ['Investigation numérique', "Analyse d'artefacts", 'LLM locaux (Ollama)', 'Détection d’anomalies'] },
@@ -82,15 +84,28 @@ export const education: Education[] = [
     location: 'Dakar, Sénégal',
     period: '2020 – 2023',
   },
-  {
-    degree: 'Baccalauréat Scientifique',
-    school: 'Lycée de Tokoin',
-    location: 'Lomé, Togo',
-    period: '2017 – 2020',
-  },
 ];
 
 export const projects: Project[] = [
+  {
+    id: 'underworld',
+    title: 'Underworld Monitor',
+    subtitle: 'Plateforme de Threat Intelligence dark web',
+    description:
+      "Plateforme auto-hébergée de veille sur les fuites de données publiées sur le dark web. Elle lit les sites de fuite des groupes de rançongiciel, les forums et Telegram via Tor, repère les organisations surveillées et produit pour chacune une alerte vérifiable : qui revendique, quand, avec quelles preuves et à quel point c'est grave.",
+    highlights: [
+      'Collecte exclusivement via Tor, depuis un réseau Docker isolé',
+      'Classement par règles puis arbitrage par un LLM local (Ollama), sans fuite de données',
+      'Gravité NIS2, crédibilité, notation Admiralty et marquage TLP',
+      'Exports PDF, STIX 2.1 et CSV, plus de 1 600 tests',
+    ],
+    technologies: ['Python', 'FastAPI', 'Celery', 'PostgreSQL', 'Tor', 'Ollama', 'spaCy', 'React', 'TypeScript', 'Docker'],
+    categories: ['security', 'web'],
+    featured: true,
+    flagship: true,
+    image: 'projects/underworld-monitor.png',
+    repo: 'https://github.com/DonaldEvlo/Underworld-Monitor',
+  },
   {
     id: 'guardpay',
     title: 'GuardPay AI',

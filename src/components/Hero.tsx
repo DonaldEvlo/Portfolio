@@ -7,7 +7,7 @@ const prompt = `${profile.handle}@kali:~$`;
 
 const terminal: { cmd: string; out: string[] }[] = [
   { cmd: 'whoami', out: [`${profile.firstName} ${profile.lastName}`] },
-  { cmd: 'cat focus.txt', out: ['cybersécurité · forensics · IA', 'développement web & mobile'] },
+  { cmd: 'cat focus.txt', out: ['threat intel · forensics · IA', 'développement web & mobile'] },
   {
     cmd: 'ls ~/projets',
     out: [projects.filter((p) => p.repo).map((p) => `${p.id}/`).join('  ')],

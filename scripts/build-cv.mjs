@@ -84,6 +84,15 @@ try {
     awaitPromise: true,
   });
 
+  // La page A4 masque ce qui dépasse : refuser un CV tronqué plutôt que le publier.
+  const { result: overflow } = await send('Runtime.evaluate', {
+    expression: `(() => { const page = document.querySelector('#root > *'); return page.scrollHeight - page.clientHeight; })()`,
+    returnByValue: true,
+  });
+  if (overflow.value > 0) {
+    throw new Error(`Le CV dépasse la page A4 de ${overflow.value}px : raccourcir le contenu de src/data/profile.ts.`);
+  }
+
   const { data } = await send('Page.printToPDF', {
     printBackground: true,
     preferCSSPageSize: true,

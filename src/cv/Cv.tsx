@@ -22,7 +22,15 @@ function SideHeading({ children }: { children: ReactNode }) {
   );
 }
 
+/** Le CV tient sur une page : seuls les premiers projets phares sont détaillés. */
+const DETAILED_PROJECTS = 3;
+const MAX_TECH = 8;
+
 export function Cv() {
+  const showcased = projects.filter((project) => project.featured);
+  const detailed = showcased.slice(0, DETAILED_PROJECTS);
+  const others = [...showcased.slice(DETAILED_PROJECTS), ...projects.filter((project) => !project.featured)];
+
   const contacts = [
     { icon: Mail, label: profile.email, href: `mailto:${profile.email}` },
     { icon: LinkedinIcon, label: 'in/donald-william-kodjo-evlo', href: profile.linkedin },
@@ -105,7 +113,7 @@ export function Cv() {
         </aside>
 
         {/* Colonne principale */}
-        <main className="space-y-[5mm] px-[10mm] py-[7mm] text-[8.6pt] leading-[1.42]">
+        <main className="space-y-[4mm] px-[10mm] pb-[5mm] pt-[6.5mm] text-[8.6pt] leading-[1.4]">
           <section>
             <Heading>Profil</Heading>
             <p>{profile.summary}</p>
@@ -141,35 +149,32 @@ export function Cv() {
           <section>
             <Heading>Projets</Heading>
             <div className="space-y-[2.8mm]">
-              {projects
-                .filter((project) => project.featured)
-                .map((project) => (
-                  <article key={project.id}>
-                    <div className="flex items-baseline justify-between gap-[3mm]">
-                      <h3 className="text-[9.5pt] font-semibold text-ink">
-                        {project.title}{' '}
-                        <span className="font-normal text-slate-500">— {project.subtitle}</span>
-                      </h3>
-                      {project.note && <span className="shrink-0 text-[7.5pt] text-slate-500">{project.note}</span>}
-                    </div>
-                    <p>{project.description}</p>
-                    <p className="mt-[0.5mm] font-mono text-[7.3pt] text-dev-print">{project.technologies.join(' · ')}</p>
-                  </article>
-                ))}
+              {detailed.map((project) => (
+                <article key={project.id}>
+                  <div className="flex items-baseline justify-between gap-[3mm]">
+                    <h3 className="text-[9.5pt] font-semibold text-ink">
+                      {project.title} <span className="font-normal text-slate-500">— {project.subtitle}</span>
+                    </h3>
+                    {project.note && <span className="shrink-0 text-[7.5pt] text-slate-500">{project.note}</span>}
+                  </div>
+                  <p>{project.description}</p>
+                  <p className="mt-[0.5mm] font-mono text-[7.3pt] text-dev-print">
+                    {project.technologies.slice(0, MAX_TECH).join(' · ')}
+                  </p>
+                </article>
+              ))}
             </div>
             <h3 className="mb-[1.2mm] mt-[3.5mm] text-[8.5pt] font-semibold text-ink">Autres projets</h3>
             <ul className="space-y-[0.8mm]">
-              {projects
-                .filter((project) => !project.featured)
-                .map((project) => (
-                  <li key={project.id} className="flex gap-[2mm]">
-                    <span className="text-cyber-print">▹</span>
-                    <span>
-                      <span className="font-medium text-ink">{project.title}</span>
-                      <span className="text-slate-500"> — {project.subtitle}</span>
-                    </span>
-                  </li>
-                ))}
+              {others.map((project) => (
+                <li key={project.id} className="flex gap-[2mm]">
+                  <span className="text-cyber-print">▹</span>
+                  <span>
+                    <span className="font-medium text-ink">{project.title}</span>
+                    <span className="text-slate-500"> — {project.subtitle}</span>
+                  </span>
+                </li>
+              ))}
             </ul>
           </section>
 

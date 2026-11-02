@@ -84,6 +84,65 @@ function FeaturedProject({ project }: { project: Project }) {
   );
 }
 
+function FlagshipProject({ project }: { project: Project }) {
+  return (
+    <article className="card group relative mb-6 grid overflow-hidden lg:grid-cols-[1fr_1.15fr]">
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-cyber via-dev to-transparent" />
+      <div className="flex flex-col p-7 lg:p-9">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 font-mono text-xs text-cyber">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyber" />
+              projet phare
+            </p>
+            <h3 className="text-3xl font-bold text-white">{project.title}</h3>
+            <p className="mt-1 font-mono text-sm text-cyber">{project.subtitle}</p>
+          </div>
+          <ProjectLinks project={project} />
+        </div>
+
+        <p className="mb-5 leading-relaxed text-slate-400">{project.description}</p>
+
+        <ul className="mb-6 space-y-2 text-sm text-slate-300">
+          {project.highlights.map((h) => (
+            <li key={h} className="flex gap-3">
+              <span className="font-mono text-cyber">▹</span>
+              {h}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-auto flex flex-wrap gap-2">
+          {project.technologies.map((tech) => (
+            <Tag key={tech} tone="cyber">
+              {tech}
+            </Tag>
+          ))}
+        </div>
+      </div>
+
+      {project.image && (
+        <a
+          href={project.repo ?? project.demo}
+          target="_blank"
+          rel="noreferrer"
+          className="relative block border-t border-white/8 bg-ink/60 p-4 lg:border-l lg:border-t-0 lg:p-6"
+          aria-label={`Voir ${project.title} sur GitHub`}
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}${project.image}`}
+            alt={`Capture d'écran de ${project.title}`}
+            width={1600}
+            height={1000}
+            loading="lazy"
+            className="h-full w-full rounded-lg border border-white/10 object-cover object-top-left shadow-2xl shadow-cyber/5 transition-transform duration-500 group-hover:scale-[1.015]"
+          />
+        </a>
+      )}
+    </article>
+  );
+}
+
 function ProjectCard({ project }: { project: Project }) {
   return (
     <article className="card flex flex-col p-6">
@@ -107,7 +166,8 @@ export function Projects() {
   const [filter, setFilter] = useState<Filter>('all');
 
   const visible = filter === 'all' ? projects : projects.filter((p) => p.categories.includes(filter));
-  const featured = visible.filter((p) => p.featured);
+  const flagship = visible.filter((p) => p.flagship);
+  const featured = visible.filter((p) => p.featured && !p.flagship);
   const others = visible.filter((p) => !p.featured);
 
   return (
@@ -116,7 +176,7 @@ export function Projects() {
       index="04"
       label="projets"
       title="Ce que j'ai construit."
-      intro="Des outils de sécurité qui s'appuient sur l'IA, et des applications web et mobiles développées de bout en bout."
+      intro="De la threat intelligence et des outils de sécurité qui s'appuient sur l'IA, et des applications web et mobiles développées de bout en bout."
     >
       <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filtrer les projets">
         {filters.map((f) => (
@@ -136,6 +196,10 @@ export function Projects() {
           </button>
         ))}
       </div>
+
+      {flagship.map((project) => (
+        <FlagshipProject key={project.id} project={project} />
+      ))}
 
       {featured.length > 0 && (
         <div className="mb-6 grid gap-6 lg:grid-cols-3">

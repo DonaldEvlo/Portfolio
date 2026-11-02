@@ -9,6 +9,10 @@ export interface Project {
   technologies: string[];
   categories: ProjectCategory[];
   featured: boolean;
+  /** Projet phare : affiché en grand, en tête de la section. */
+  flagship?: boolean;
+  /** Capture d'écran, chemin relatif à public/. */
+  image?: string;
   repo?: string;
   demo?: string;
   note?: string;
