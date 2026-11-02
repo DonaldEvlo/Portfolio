@@ -1,125 +1,119 @@
-import { ChevronDown, Code, Shield, Terminal } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { ArrowDown, Download, MapPin } from 'lucide-react';
+import { profile, projects } from '../data/profile';
+import { useTypewriter } from '../hooks/useTypewriter';
+import { GithubIcon, LinkedinIcon } from './ui';
 
-export const Hero: React.FC = () => {
-  const [typedText, setTypedText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
-  const roles = [
-    'Développeur Full-Stack',
-    'Expert en Cybersécurité',
-    'Pentester Certifié',
-    'Architecte Sécurisé',
-    'Passionné de Web3',
-    
-  ];
+const prompt = `${profile.handle}@kali:~$`;
 
-  useEffect(() => {
-    const currentRole = roles[currentIndex];
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (typedText.length < currentRole.length) {
-          setTypedText(currentRole.slice(0, typedText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        if (typedText.length > 0) {
-          setTypedText(typedText.slice(0, -1));
-        } else {
-          setIsDeleting(false);
-          setCurrentIndex((prev) => (prev + 1) % roles.length);
-        }
-      }
-    }, isDeleting ? 50 : 100);
+const terminal: { cmd: string; out: string[] }[] = [
+  { cmd: 'whoami', out: [`${profile.firstName} ${profile.lastName}`] },
+  { cmd: 'cat focus.txt', out: ['cybersécurité · forensics · IA', 'développement web & mobile'] },
+  {
+    cmd: 'ls ~/projets',
+    out: [projects.filter((p) => p.repo).map((p) => `${p.id}/`).join('  ')],
+  },
+];
 
-    return () => clearTimeout(timeout);
-  }, [typedText, currentIndex, isDeleting, roles]);
-
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+export function Hero() {
+  const role = useTypewriter(profile.roles);
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Floating particles */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`
-            }}
-          >
-            <div className="w-2 h-2 bg-green-400/30 rounded-full animate-pulse"></div>
+    <section id="top" className="relative flex min-h-svh items-center pb-20 pt-28">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
+        <div>
+          <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-slate-400">
+            <MapPin className="h-3.5 w-3.5 text-cyber" />
+            {profile.location}
+          </p>
+
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
+            {profile.firstName}
+            <br />
+            <span className="text-gradient">{profile.lastName}</span>
+          </h1>
+
+          <p className="mt-6 h-8 font-mono text-lg text-slate-300 md:text-xl" aria-label={profile.roles.join(', ')}>
+            <span className="text-cyber" aria-hidden="true">
+              &gt;{' '}
+            </span>
+            <span aria-hidden="true">{role}</span>
+            <span className="animate-blink text-dev" aria-hidden="true">
+              ▍
+            </span>
+          </p>
+
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-400">{profile.summary}</p>
+
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <a
+              href="#projects"
+              className="rounded-lg bg-linear-to-r from-cyber to-dev px-6 py-3 font-semibold text-ink transition-transform hover:scale-[1.03]"
+            >
+              Voir mes projets
+            </a>
+            <a
+              href={profile.cv}
+              download
+              className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-6 py-3 font-semibold text-white transition-colors hover:border-cyber/50 hover:bg-cyber/5"
+            >
+              <Download className="h-4 w-4" />
+              Télécharger le CV
+            </a>
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noreferrer"
+              className="p-3 text-slate-400 transition-colors hover:text-white"
+              aria-label="Profil GitHub"
+            >
+              <GithubIcon className="h-6 w-6" />
+            </a>
+            <a
+              href={profile.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="-ml-3 p-3 text-slate-400 transition-colors hover:text-white"
+              aria-label="Profil LinkedIn"
+            >
+              <LinkedinIcon className="h-6 w-6" />
+            </a>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="container mx-auto px-4 text-center relative z-10">
-        <div className="mb-8 inline-block">
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <Terminal className="w-12 h-12 text-green-400 animate-bounce" />
-            <Code className="w-12 h-12 text-cyan-400 animate-pulse" />
-            <Shield className="w-12 h-12 text-red-400 animate-spin" style={{ animationDuration: '3s' }} />
+        <div className="card overflow-hidden shadow-2xl shadow-cyber/5">
+          <div className="flex items-center gap-2 border-b border-white/8 px-4 py-3">
+            <span className="h-3 w-3 rounded-full bg-red-400/80" />
+            <span className="h-3 w-3 rounded-full bg-yellow-400/80" />
+            <span className="h-3 w-3 rounded-full bg-cyber/80" />
+            <span className="ml-3 font-mono text-xs text-slate-500">zsh — {profile.handle}@kali</span>
+          </div>
+          <div className="space-y-4 p-5 font-mono text-[13px] leading-relaxed sm:text-sm">
+            {terminal.map((entry, i) => (
+              <div key={entry.cmd} className="animate-line-in" style={{ animationDelay: `${300 + i * 450}ms` }}>
+                <p>
+                  <span className="text-cyber">{prompt}</span> <span className="text-white">{entry.cmd}</span>
+                </p>
+                {entry.out.map((line) => (
+                  <p key={line} className="wrap-break-word text-slate-400">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            ))}
+            <p className="animate-line-in" style={{ animationDelay: `${300 + terminal.length * 450}ms` }}>
+              <span className="text-cyber">{prompt}</span> <span className="animate-blink text-dev">▍</span>
+            </p>
           </div>
         </div>
-
-        <h1 className="text-5xl md:text-7xl font-bold mb-6">
-          <span className="bg-gradient-to-r from-white via-green-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">
-            Donald William Kodjo EVLO
-          </span>
-        </h1>
-
-        <div className="h-20 mb-8">
-          <h2 className="text-2xl md:text-3xl text-gray-300 mb-2">
-            <span className="text-green-400 font-mono">{'> '}</span>
-            <span className="text-white">{typedText}</span>
-            <span className="animate-blink text-green-400">|</span>
-          </h2>
-        </div>
-
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-          Passionné par la création d'applications sécurisées et performantes, 
-          je combine développement moderne et expertise en cybersécurité pour 
-          protéger le web de demain.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <button 
-            onClick={scrollToAbout}
-            className="group relative px-8 py-4 bg-gradient-to-r from-green-500 to-cyan-500 text-black font-bold rounded-lg overflow-hidden hover:scale-105 transform transition-all duration-300"
-          >
-            <span className="relative z-10">Découvrir mon profil</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </button>
-          
-          <button className="group px-8 py-4 border-2 border-green-400 text-green-400 font-bold rounded-lg hover:bg-green-400 hover:text-black transition-all duration-300 hover:shadow-lg hover:shadow-green-400/50">
-            Télécharger CV
-          </button>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown 
-            size={32} 
-            className="text-green-400 cursor-pointer hover:text-cyan-400 transition-colors"
-            onClick={scrollToAbout}
-          />
-        </div>
       </div>
 
-      {/* Glitch effect overlay */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent animate-glitch"></div>
-      </div>
+      <a
+        href="#about"
+        className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 animate-bounce text-slate-500 transition-colors hover:text-cyber md:block"
+        aria-label="Défiler vers le profil"
+      >
+        <ArrowDown className="h-6 w-6" />
+      </a>
     </section>
   );
-};
+}

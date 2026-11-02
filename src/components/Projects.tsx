@@ -1,160 +1,169 @@
-import React, { useState } from 'react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { ExternalLink, Github, Shield, Globe, Smartphone } from 'lucide-react';
-import type { Project } from '../types';
+import { ExternalLink, FolderGit2, Monitor, Shield, Smartphone, Globe } from 'lucide-react';
+import { useState } from 'react';
+import { profile, projects } from '../data/profile';
+import type { Project, ProjectCategory } from '../types';
+import { GithubIcon, Section, Tag } from './ui';
 
-export const Projects: React.FC = () => {
-  const [ref, isVisible] = useIntersectionObserver(0.3);
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'security' | 'web' | 'mobile'>('all');
+type Filter = 'all' | ProjectCategory;
 
-  const projects: Project[] = [
-    {
-      id: '1',
-      title: 'SecureBank Dashboard',
-      description: 'Interface d\'administration sécurisée pour une banque en ligne avec authentification multi-facteurs et chiffrement end-to-end.',
-      technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'JWT', 'AES-256'],
-      category: 'security',
-      status: 'completed',
-      featured: true
-    },
-    {
-      id: '2',
-      title: 'VulnScanner Pro',
-      description: 'Outil de scan de vulnérabilités web automatisé avec génération de rapports détaillés et intégration CI/CD.',
-      technologies: ['Python', 'FastAPI', 'React', 'Docker', 'OWASP ZAP', 'Selenium'],
-      category: 'security',
-      status: 'completed',
-      featured: true
-    },
-    {
-      id: '3',
-      title: 'E-Commerce Platform',
-      description: 'Plateforme e-commerce complète avec paiements sécurisés, gestion d\'inventaire et analytics avancées.',
-      technologies: ['Next.js', 'Stripe', 'Prisma', 'PostgreSQL', 'Redis', 'AWS'],
-      category: 'web',
-      status: 'completed',
-      featured: false
-    },
-    {
-      id: '4',
-      title: 'CyberTraining App',
-      description: 'Application mobile d\'apprentissage en cybersécurité avec simulations interactives et gamification.',
-      technologies: ['React Native', 'TypeScript', 'Firebase', 'Node.js'],
-      category: 'mobile',
-      status: 'in-progress',
-      featured: true
-    }
-  ];
+const filters: { key: Filter; label: string; icon: typeof Shield }[] = [
+  { key: 'all', label: 'Tous', icon: FolderGit2 },
+  { key: 'security', label: 'Sécurité', icon: Shield },
+  { key: 'web', label: 'Web', icon: Globe },
+  { key: 'mobile', label: 'Mobile', icon: Smartphone },
+  { key: 'desktop', label: 'Desktop', icon: Monitor },
+];
 
-  const categories = [
-    { key: 'all', label: 'Tous', icon: Globe },
-    { key: 'security', label: 'Sécurité', icon: Shield },
-    { key: 'web', label: 'Web', icon: Globe },
-    { key: 'mobile', label: 'Mobile', icon: Smartphone }
-  ];
+function ProjectLinks({ project }: { project: Project }) {
+  return (
+    <div className="flex items-center gap-4">
+      {project.repo && (
+        <a
+          href={project.repo}
+          target="_blank"
+          rel="noreferrer"
+          className="text-slate-400 transition-colors hover:text-white"
+          aria-label={`Code source de ${project.title}`}
+        >
+          <GithubIcon className="h-5 w-5" />
+        </a>
+      )}
+      {project.demo && (
+        <a
+          href={project.demo}
+          target="_blank"
+          rel="noreferrer"
+          className="text-slate-400 transition-colors hover:text-white"
+          aria-label={`Démo en ligne de ${project.title}`}
+        >
+          <ExternalLink className="h-5 w-5" />
+        </a>
+      )}
+    </div>
+  );
+}
 
-  const filteredProjects = selectedCategory === 'all' 
-    ? projects 
-    : projects.filter(project => project.category === selectedCategory);
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'security': return 'from-red-400 to-orange-400';
-      case 'web': return 'from-green-400 to-teal-400';
-      case 'mobile': return 'from-blue-400 to-purple-400';
-      default: return 'from-gray-400 to-gray-600';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    return status === 'completed' ? 'text-green-400' : 'text-yellow-400';
-  };
+function FeaturedProject({ project }: { project: Project }) {
+  const isSecurity = project.categories.includes('security');
 
   return (
-    <section id="projects" className="py-20 relative">
-      <div className="container mx-auto px-4">
-        <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-              Projets Réalisés
-            </span>
-          </h2>
-
-          {/* Category filter */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => setSelectedCategory(category.key as any)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-full border-2 transition-all duration-300 ${
-                  selectedCategory === category.key
-                    ? 'border-green-400 bg-green-400/20 text-green-400'
-                    : 'border-gray-600 text-gray-400 hover:border-green-400/50 hover:text-green-400'
-                }`}
-              >
-                <category.icon className="w-4 h-4" />
-                <span>{category.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            {filteredProjects.map((project, index) => (
-              <div 
-                key={project.id}
-                className={`group bg-black/40 backdrop-blur-md border border-green-500/30 rounded-2xl p-8 hover:border-cyan-400/50 transition-all duration-500 hover:scale-105 ${
-                  project.featured ? 'ring-2 ring-green-400/20' : ''
-                } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                {project.featured && (
-                  <div className="absolute -top-3 left-6 bg-gradient-to-r from-green-400 to-cyan-400 text-black px-4 py-1 rounded-full text-sm font-bold">
-                    Projet Phare
-                  </div>
-                )}
-
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-2xl font-bold text-white group-hover:text-green-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  <div className="flex items-center space-x-2">
-                    <span className={`text-sm font-bold ${getStatusColor(project.status)}`}>
-                      {project.status === 'completed' ? 'Terminé' : 'En cours'}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.technologies.map((tech, i) => (
-                    <span 
-                      key={i}
-                      className={`px-3 py-1 bg-gradient-to-r ${getCategoryColor(project.category)}/20 border border-current/30 rounded-full text-sm font-medium`}
-                      style={{ color: `${getCategoryColor(project.category).includes('red') ? '#f87171' : getCategoryColor(project.category).includes('green') ? '#4ade80' : '#60a5fa'}` }}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 text-green-400 hover:text-cyan-400 transition-colors group/btn">
-                    <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                    <span>Code</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-green-400 hover:text-cyan-400 transition-colors group/btn">
-                    <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                    <span>Demo</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+    <article className="card group relative flex flex-col overflow-hidden p-7">
+      <div
+        className={`absolute inset-x-0 top-0 h-px bg-linear-to-r ${isSecurity ? 'from-cyber' : 'from-dev'} to-transparent`}
+      />
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <p className={`mb-2 font-mono text-xs ${isSecurity ? 'text-cyber' : 'text-dev'}`}>
+            {project.subtitle}
+            {project.note && <span className="text-slate-500"> · {project.note}</span>}
+          </p>
+          <h3 className="text-2xl font-bold text-white">{project.title}</h3>
         </div>
+        <ProjectLinks project={project} />
       </div>
-    </section>
+
+      <p className="mb-5 leading-relaxed text-slate-400">{project.description}</p>
+
+      <ul className="mb-6 space-y-2 text-sm text-slate-300">
+        {project.highlights.map((h) => (
+          <li key={h} className="flex gap-3">
+            <span className={`font-mono ${isSecurity ? 'text-cyber' : 'text-dev'}`}>▹</span>
+            {h}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-auto flex flex-wrap gap-2">
+        {project.technologies.map((tech) => (
+          <Tag key={tech} tone={isSecurity ? 'cyber' : 'dev'}>
+            {tech}
+          </Tag>
+        ))}
+      </div>
+    </article>
   );
-};
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <article className="card flex flex-col p-6">
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <FolderGit2 className="h-7 w-7 text-dev" />
+        <ProjectLinks project={project} />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-white">{project.title}</h3>
+      <p className="mb-3 font-mono text-xs text-slate-500">{project.subtitle}</p>
+      <p className="mb-5 text-sm leading-relaxed text-slate-400">{project.description}</p>
+      <div className="mt-auto flex flex-wrap gap-2">
+        {project.technologies.map((tech) => (
+          <Tag key={tech}>{tech}</Tag>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+export function Projects() {
+  const [filter, setFilter] = useState<Filter>('all');
+
+  const visible = filter === 'all' ? projects : projects.filter((p) => p.categories.includes(filter));
+  const featured = visible.filter((p) => p.featured);
+  const others = visible.filter((p) => !p.featured);
+
+  return (
+    <Section
+      id="projects"
+      index="04"
+      label="projets"
+      title="Ce que j'ai construit."
+      intro="Des outils de sécurité qui s'appuient sur l'IA, et des applications web et mobiles développées de bout en bout."
+    >
+      <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filtrer les projets">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            onClick={() => setFilter(f.key)}
+            aria-pressed={filter === f.key}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+              filter === f.key
+                ? 'border-cyber/50 bg-cyber/10 text-cyber'
+                : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
+            }`}
+          >
+            <f.icon className="h-4 w-4" />
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {featured.length > 0 && (
+        <div className="mb-6 grid gap-6 lg:grid-cols-3">
+          {featured.map((project) => (
+            <FeaturedProject key={project.id} project={project} />
+          ))}
+        </div>
+      )}
+
+      {others.length > 0 && (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {others.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      )}
+
+      <p className="mt-12 text-center">
+        <a
+          href={profile.github}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 font-mono text-sm text-slate-400 transition-colors hover:text-cyber"
+        >
+          <GithubIcon className="h-4 w-4" />
+          Tous mes dépôts sur GitHub →
+        </a>
+      </p>
+    </Section>
+  );
+}

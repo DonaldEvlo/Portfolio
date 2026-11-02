@@ -22,3 +22,9 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Build (publié sur la branche gh-pages)
+dist
+
+# CV généré par `npm run cv` (publié via `npm run deploy`, pas versionné)
+public/CV_*.pdf

@@ -6,13 +6,14 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
 import { Skills } from './components/Skills';
+import { profile } from './data/profile';
 
 function App() {
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       <AnimatedBackground />
       <Header />
-      
+
       <main className="relative z-10">
         <Hero />
         <About />
@@ -22,11 +23,13 @@ function App() {
         <Contact />
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-green-500/20 py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">
-            © 2024 Donald William Kodjo EVLO - CyberDev. Tous droits réservés.
+      <footer className="relative z-10 border-t border-white/8 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 font-mono text-xs text-slate-500 sm:flex-row md:px-8">
+          <p>
+            © {new Date().getFullYear()} {profile.firstName} {profile.lastName}
+          </p>
+          <p>
+            <span className="text-cyber">$</span> built with React · Vite · Tailwind
           </p>
         </div>
       </footer>

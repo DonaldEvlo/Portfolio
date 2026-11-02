@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+@source not '../../dist';
+@source not '../../.bolt';
+
+/* Mêmes polices et couleurs que le site, en version imprimable. */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink: #05070a;
+  --color-cyber: #4ade80;
+  --color-dev: #22d3ee;
+  --color-cyber-print: #15803d;
+  --color-dev-print: #0e7490;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-slate-200 font-sans text-slate-700 antialiased;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @media print {
+    html,
+    body {
+      background: white;
+    }
+  }
+}

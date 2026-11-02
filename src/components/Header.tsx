@@ -1,77 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X } from 'lucide-react';
+import { Download, Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { profile } from '../data/profile';
+import { GithubIcon, LinkedinIcon } from './ui';
 
-export const Header: React.FC = () => {
+const links = [
+  { id: 'about', label: 'Profil' },
+  { id: 'skills', label: 'Compétences' },
+  { id: 'experience', label: 'Expérience' },
+  { id: 'projects', label: 'Projets' },
+  { id: 'contact', label: 'Contact' },
+];
+
+export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
-    }
-  };
-
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-black/90 backdrop-blur-md border-b border-green-500/20' : 'bg-transparent'
-    }`}>
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 group cursor-pointer">
-            <Shield className="w-8 h-8 text-green-400 group-hover:text-cyan-400 transition-colors animate-pulse" />
-            <span className="text-xl font-bold bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-              CyberDev
-            </span>
-          </div>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        isScrolled || isOpen ? 'border-b border-white/8 bg-ink/80 backdrop-blur-md' : 'border-b border-transparent'
+      }`}
+    >
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+        <a href="#top" className="group font-mono text-sm text-slate-300" onClick={() => setIsOpen(false)}>
+          <span className="text-cyber">~/</span>
+          <span className="transition-colors group-hover:text-white">{profile.handle}</span>
+          <span className="animate-blink text-dev">_</span>
+        </a>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            {['about', 'skills', 'experience', 'projects', 'contact'].map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item)}
-                className="relative text-gray-300 hover:text-green-400 transition-colors capitalize group"
-              >
-                {item}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-cyan-400 group-hover:w-full transition-all duration-300"></span>
-              </button>
-            ))}
-          </nav>
-
-          <button
-            className="md:hidden text-gray-300 hover:text-green-400 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Navigation principale">
+          {links.map((link, i) => (
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              className="rounded-md px-3 py-2 text-sm text-slate-400 transition-colors hover:text-white"
+            >
+              <span className="font-mono text-xs text-cyber/70">0{i + 1}.</span> {link.label}
+            </a>
+          ))}
+          <a
+            href={profile.github}
+            target="_blank"
+            rel="noreferrer"
+            className="ml-2 p-2 text-slate-400 transition-colors hover:text-white"
+            aria-label="Profil GitHub"
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+            <GithubIcon className="h-5 w-5" />
+          </a>
+          <a
+            href={profile.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="p-2 text-slate-400 transition-colors hover:text-white"
+            aria-label="Profil LinkedIn"
+          >
+            <LinkedinIcon className="h-5 w-5" />
+          </a>
+          <a
+            href={profile.cv}
+            download
+            className="ml-2 inline-flex items-center gap-2 rounded-md border border-cyber/40 px-4 py-2 font-mono text-xs text-cyber transition-colors hover:bg-cyber/10"
+          >
+            <Download className="h-4 w-4" />
+            CV
+          </a>
+        </nav>
 
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 p-4 bg-black/95 backdrop-blur-md rounded-lg border border-green-500/20">
-            <nav className="flex flex-col space-y-4">
-              {['about', 'skills', 'experience', 'projects', 'contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item)}
-                  className="text-left text-gray-300 hover:text-green-400 transition-colors capitalize"
-                >
-                  {item}
-                </button>
-              ))}
-            </nav>
-          </div>
-        )}
+        <button
+          type="button"
+          className="text-slate-300 hover:text-white md:hidden"
+          onClick={() => setIsOpen((open) => !open)}
+          aria-expanded={isOpen}
+          aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {isOpen && (
+        <nav className="border-t border-white/8 px-5 pb-6 pt-2 md:hidden" aria-label="Navigation mobile">
+          {links.map((link, i) => (
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={() => setIsOpen(false)}
+              className="block py-3 text-slate-300 hover:text-white"
+            >
+              <span className="font-mono text-xs text-cyber">0{i + 1}.</span> {link.label}
+            </a>
+          ))}
+          <a href={profile.cv} download className="mt-2 flex items-center gap-2 py-3 font-mono text-sm text-cyber">
+            <Download className="h-4 w-4" />
+            Télécharger le CV
+          </a>
+          <a
+            href={profile.github}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 py-3 font-mono text-sm text-slate-300"
+          >
+            <GithubIcon className="h-4 w-4" />
+            GitHub
+          </a>
+          <a
+            href={profile.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 py-3 font-mono text-sm text-slate-300"
+          >
+            <LinkedinIcon className="h-4 w-4" />
+            LinkedIn
+          </a>
+        </nav>
+      )}
     </header>
   );
-};
+}

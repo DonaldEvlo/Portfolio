@@ -1,97 +1,91 @@
-import React from 'react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { User, Brain, Target, Zap, Terminal, Shield, Code } from 'lucide-react';
+import { Bug, Code2, Languages, ScanSearch, Smartphone, Sparkles } from 'lucide-react';
+import { profile } from '../data/profile';
+import { Section } from './ui';
 
-export const About: React.FC = () => {
-  const [ref, isVisible] = useIntersectionObserver(0.3);
+const pillars = [
+  {
+    icon: ScanSearch,
+    tone: 'text-cyber',
+    title: 'Forensics & IA',
+    text: "Collecte et analyse d'artefacts, outils d'investigation enrichis par des LLM locaux.",
+  },
+  {
+    icon: Bug,
+    tone: 'text-cyber',
+    title: 'Sécurité offensive',
+    text: 'Pentest et audit applicatif avec Burp Suite, OWASP ZAP, Metasploit, Nmap.',
+  },
+  {
+    icon: Smartphone,
+    tone: 'text-dev',
+    title: 'Mobile',
+    text: 'Applications Flutter en production, détecteurs natifs Kotlin.',
+  },
+  {
+    icon: Code2,
+    tone: 'text-dev',
+    title: 'Web full-stack',
+    text: 'Interfaces React, API Express et FastAPI, bases SQL.',
+  },
+];
 
-  const stats = [
-    { icon: User, label: 'Années d\'expérience', value: '7+' },
-    { icon: Brain, label: 'Projets réalisés', value: '50+' },
-    { icon: Target, label: 'Vulnérabilités découvertes', value: '200+' },
-    { icon: Zap, label: 'Certifications', value: '12' }
-  ];
-
+export function About() {
   return (
-    <section id="about" className="py-20 relative">
-      <div className="container mx-auto px-4">
-        <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-              À propos de moi
-            </span>
-          </h2>
+    <Section
+      id="about"
+      index="01"
+      label="profil"
+      title={
+        <>
+          Construire des applications, <span className="text-gradient">et savoir les attaquer.</span>
+        </>
+      }
+    >
+      <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-5 text-lg leading-relaxed text-slate-400">
+          {profile.about.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-2xl transform rotate-3 animate-pulse"></div>
-              <div className="relative bg-black/40 backdrop-blur-md border border-green-500/30 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <Terminal className="w-6 h-6 text-green-400 mr-3" />
-                  Mon parcours
-                </h3>
-                <p className="text-gray-300 leading-relaxed mb-4">
-                  Développeur passionné depuis plus de 7 ans, j'ai évolué naturellement vers la cybersécurité 
-                  en découvrant l'importance cruciale de la sécurité dans le développement moderne.
-                </p>
-                <p className="text-gray-300 leading-relaxed mb-4">
-                  Spécialisé dans les tests d'intrusion, l'analyse de vulnérabilités et le développement sécurisé, 
-                  je combine expertise technique et vision stratégique pour créer des solutions robustes.
-                </p>
-                <p className="text-gray-300 leading-relaxed">
-                  Ma mission : protéger les applications et infrastructures contre les menaces émergentes 
-                  tout en maintenant une expérience utilisateur optimale.
-                </p>
-              </div>
+          <div className="grid gap-4 pt-4 sm:grid-cols-2">
+            <div className="card p-5">
+              <p className="mb-3 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-slate-500">
+                <Sparkles className="h-4 w-4 text-cyber" /> Qualités
+              </p>
+              <ul className="space-y-1.5 text-base text-slate-300">
+                {profile.qualities.map((q) => (
+                  <li key={q}>
+                    <span className="text-cyber">→</span> {q}
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              {stats.map((stat, index) => (
-                <div 
-                  key={index}
-                  className="group relative bg-black/40 backdrop-blur-md border border-green-500/30 rounded-xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:scale-105"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-cyan-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative text-center">
-                    <stat.icon className="w-12 h-12 text-green-400 mx-auto mb-3 group-hover:text-cyan-400 transition-colors animate-pulse" />
-                    <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
-                    <div className="text-gray-400 text-sm">{stat.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-green-500/10 via-cyan-500/10 to-green-500/10 rounded-2xl p-8 border border-green-500/20">
-            <h3 className="text-2xl font-bold text-white mb-6 text-center">
-              Philosophie de travail
-            </h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Shield className="w-8 h-8 text-black" />
-                </div>
-                <h4 className="text-lg font-semibold text-white mb-2">Sécurité par conception</h4>
-                <p className="text-gray-400 text-sm">Intégrer la sécurité dès les premières phases de développement</p>
-              </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-green-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Code className="w-8 h-8 text-black" />
-                </div>
-                <h4 className="text-lg font-semibold text-white mb-2">Code propre</h4>
-                <p className="text-gray-400 text-sm">Maintenir des standards élevés de qualité et de lisibilité</p>
-              </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Zap className="w-8 h-8 text-black" />
-                </div>
-                <h4 className="text-lg font-semibold text-white mb-2">Innovation continue</h4>
-                <p className="text-gray-400 text-sm">Se tenir à jour des dernières technologies et menaces</p>
-              </div>
+            <div className="card p-5">
+              <p className="mb-3 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-slate-500">
+                <Languages className="h-4 w-4 text-dev" /> Langues
+              </p>
+              <ul className="space-y-1.5 text-base text-slate-300">
+                {profile.languages.map((l) => (
+                  <li key={l.name} className="flex justify-between gap-4">
+                    {l.name}
+                    <span className="text-slate-500">{l.level}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {pillars.map((pillar) => (
+            <div key={pillar.title} className="card p-6">
+              <pillar.icon className={`mb-4 h-7 w-7 ${pillar.tone}`} />
+              <h3 className="mb-2 font-semibold text-white">{pillar.title}</h3>
+              <p className="text-sm leading-relaxed text-slate-400">{pillar.text}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </section>
+    </Section>
   );
-};
+}

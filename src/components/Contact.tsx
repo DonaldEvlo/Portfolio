@@ -1,166 +1,93 @@
-import React, { useState } from 'react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { Mail, Phone, MapPin, Send, Linkedin, Github, Twitter } from 'lucide-react';
+import { Check, Copy, Mail, MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { profile } from '../data/profile';
+import { GithubIcon, LinkedinIcon, Section } from './ui';
 
-export const Contact: React.FC = () => {
-  const [ref, isVisible] = useIntersectionObserver(0.3);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
+const channels = [
+  { icon: LinkedinIcon, label: 'LinkedIn', value: 'Donald William Kodjo EVLO', href: profile.linkedin },
+  { icon: GithubIcon, label: 'GitHub', value: profile.github.replace('https://', ''), href: profile.github },
+  { icon: MapPin, label: 'Localisation', value: profile.location },
+];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+export function Contact() {
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${profile.email}`;
+    }
   };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const contactInfo = [
-    { icon: Mail, label: 'Email', value: 'alexandre.martin@cyberdev.com', href: 'mailto:alexandre.martin@cyberdev.com' },
-    { icon: Phone, label: 'Téléphone', value: '+33 6 12 34 56 78', href: 'tel:+33612345678' },
-    { icon: MapPin, label: 'Localisation', value: 'Paris, France', href: '#' }
-  ];
-
-  const socialLinks = [
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Github, href: '#', label: 'GitHub' },
-    { icon: Twitter, href: '#', label: 'Twitter' }
-  ];
 
   return (
-    <section id="contact" className="py-20 relative">
-      <div className="container mx-auto px-4">
-        <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-              Contactez-moi
-            </span>
-          </h2>
+    <Section id="contact" index="05" label="contact" title="Travaillons ensemble.">
+      <div className="card relative overflow-hidden p-8 md:p-12">
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-cyber/10 blur-3xl" />
 
-          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Info */}
-            <div className="space-y-8">
-              <div className="bg-black/40 backdrop-blur-md border border-green-500/30 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-white mb-6">Discutons de votre projet</h3>
-                <p className="text-gray-300 mb-8 leading-relaxed">
-                  Vous avez un projet de développement ou des préoccupations de sécurité ? 
-                  Je suis là pour vous accompagner dans la réalisation de vos objectifs.
-                </p>
+        <div className="relative grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+          <div>
+            <p className="mb-8 max-w-lg text-lg leading-relaxed text-slate-400">
+              Une opportunité en cybersécurité, un audit, ou un projet web ou mobile à développer ? Écrivez-moi, je
+              réponds rapidement.
+            </p>
 
-                <div className="space-y-4">
-                  {contactInfo.map((info, index) => (
-                    <a
-                      key={index}
-                      href={info.href}
-                      className="flex items-center space-x-4 p-4 rounded-lg border border-green-500/20 hover:border-cyan-400/50 transition-all duration-300 hover:bg-green-500/10 group"
-                    >
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-cyan-400 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <info.icon className="w-5 h-5 text-black" />
-                      </div>
-                      <div>
-                        <div className="text-gray-400 text-sm">{info.label}</div>
-                        <div className="text-white font-medium group-hover:text-green-400 transition-colors">{info.value}</div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-green-500/20">
-                  <h4 className="text-lg font-bold text-white mb-4">Suivez-moi</h4>
-                  <div className="flex space-x-4">
-                    {socialLinks.map((social, index) => (
-                      <a
-                        key={index}
-                        href={social.href}
-                        className="w-10 h-10 bg-gradient-to-br from-green-400/20 to-cyan-400/20 border border-green-500/30 rounded-full flex items-center justify-center hover:border-cyan-400/50 hover:scale-110 transition-all duration-300 group"
-                      >
-                        <social.icon className="w-5 h-5 text-green-400 group-hover:text-cyan-400 transition-colors" />
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="bg-black/40 backdrop-blur-md border border-green-500/30 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">Envoyez-moi un message</h3>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-400 text-sm font-medium mb-2">Nom complet</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-black/60 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
-                      placeholder="Votre nom"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400 text-sm font-medium mb-2">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-black/60 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
-                      placeholder="votre@email.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-gray-400 text-sm font-medium mb-2">Sujet</label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-black/60 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
-                    placeholder="Sujet de votre message"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-400 text-sm font-medium mb-2">Message</label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={6}
-                    className="w-full px-4 py-3 bg-black/60 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none"
-                    placeholder="Décrivez votre projet ou vos besoins..."
-                    required
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-green-500 to-cyan-500 text-black font-bold rounded-lg hover:scale-105 transform transition-all duration-300 hover:shadow-lg hover:shadow-green-400/50 group"
-                >
-                  <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  <span>Envoyer le message</span>
-                </button>
-              </form>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={`mailto:${profile.email}`}
+                className="inline-flex items-center gap-2 rounded-lg bg-linear-to-r from-cyber to-dev px-6 py-3 font-semibold text-ink transition-transform hover:scale-[1.03]"
+              >
+                <Mail className="h-5 w-5" />
+                {profile.email}
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-3 text-sm text-slate-300 transition-colors hover:border-cyber/50 hover:text-white"
+                aria-live="polite"
+              >
+                {copied ? <Check className="h-4 w-4 text-cyber" /> : <Copy className="h-4 w-4" />}
+                {copied ? 'Copié !' : "Copier l'adresse"}
+              </button>
             </div>
           </div>
+
+          <ul className="space-y-3">
+            {channels.map((channel) => {
+              const content = (
+                <>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03]">
+                    <channel.icon className="h-5 w-5 text-cyber" />
+                  </span>
+                  <span>
+                    <span className="block text-xs text-slate-500">{channel.label}</span>
+                    <span className="block text-slate-200">{channel.value}</span>
+                  </span>
+                </>
+              );
+
+              return (
+                <li key={channel.label}>
+                  {channel.href ? (
+                    <a
+                      href={channel.href}
+                      target={channel.href.startsWith('http') ? '_blank' : undefined}
+                      rel="noreferrer"
+                      className="flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-white/[0.03]"
+                    >
+                      {content}
+                    </a>
+                  ) : (
+                    <div className="flex items-center gap-4 p-2">{content}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
-    </section>
+    </Section>
   );
-};
+}
